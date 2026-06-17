@@ -4,18 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Live Match Dashboard</title>
-    <link rel="stylesheet" href="app.css?v=10" />
+    <link rel="stylesheet" href="app.css?v=20" />
   </head>
   <body>
     <main class="app-shell">
       <section class="viewer-header">
-         <div class="viewer-logos" aria-label="Logo event">
-  <img class="viewer-logo-img" src="medali.png" alt="Medali UNCHALL 2026" />
-  <img class="viewer-logo-img" src="LOGO_DEPAN_OFFICIAL_PANITIA_UNCHALL4_2026.png" alt="UNCHALL 4" />
-  <img class="viewer-logo-img" src="kruzzarena-hybrid.png" alt="KRUZZARENA Hybrid" />
-  <img class="viewer-logo-img" src="kruzzarena-panjang.png" alt="KRUZZARENA" />
-  <img class="viewer-logo-img" src="logo-bandae.png" alt="Ultimate Bandae" />
-</div>
+        <div class="viewer-logos" aria-label="Logo event">
+          <img class="viewer-logo-img logo-square" src="medali.png" alt="Medali UNCHALL 2026" />
+          <img class="viewer-logo-img" src="kruzzarena-panjang.png" alt="KRUZZARENA" />
+          <img class="viewer-logo-img" src="LOGO_DEPAN_OFFICIAL_PANITIA_UNCHALL4_2026.png" alt="UNCHALL 4" />
+          <img class="viewer-logo-img logo-square" src="kruzzarena-hybrid.png" alt="KRUZZARENA Hybrid" />
+          <img class="viewer-logo-img logo-square" src="logo-bandae.png" alt="Ultimate Bandae" />
+        </div>
         <h1 id="viewerTitle" class="viewer-title">KRUZZARENA LIVE MATCH DASHBOARD</h1>
         <p id="viewerSubtitle" class="viewer-subtitle">TAEKWONDO ULTIMATE BANDAE CHALLENGE</p>
       </section>
@@ -44,30 +44,27 @@
       }
 
       function renderArena(arena) {
-  return `
-    <article class="match-card ${arena.color}">
-      <header class="arena-head">
-        <h2>${arena.name}</h2>
-      </header>
+        return `
+          <article class="match-card ${arena.color}">
+            <header class="arena-head"><h2>${arena.name}</h2></header>
+            <div class="current-match">
+              <div>
+                <span class="current-label">Partai</span>
+                <span class="current-number">${arena.current || "-"}</span>
+              </div>
+            </div>
 
-      <div class="current-match">
-        <div>
-          <span class="current-label">Partai</span>
-          <span class="current-number">${arena.current || "-"}</span>
-        </div>
-      </div>
+            <h3 class="section-label">Masuk Area Pertandingan</h3>
+            ${renderBoxes(arena.area, "area", "cols-2")}
 
-      <h3 class="section-label">Masuk Area Pertandingan</h3>
-      ${renderBoxes(arena.area, "area", "cols-2")}
+            <h3 class="section-label">Ruang Tunggu</h3>
+            ${renderBoxes(arena.waiting, "waiting", "cols-5")}
 
-      <h3 class="section-label">Ruang Tunggu</h3>
-      ${renderBoxes(arena.waiting, "waiting", "cols-5")}
-
-      <h3 class="section-label">Mohon Bersiap</h3>
-      ${renderBoxes(arena.ready, "ready", "cols-5")}
-    </article>
-  `;
-}
+            <h3 class="section-label">Mohon Bersiap</h3>
+            ${renderBoxes(arena.ready, "ready", "cols-5")}
+          </article>
+        `;
+      }
 
       function render(state) {
         title.textContent = state.eventName;
