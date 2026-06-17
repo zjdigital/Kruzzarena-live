@@ -342,6 +342,7 @@ select {
   font-weight: 900;
   letter-spacing: 1.2px;
   text-transform: uppercase;
+  text-align: center;
 }
 
 .number-row {
