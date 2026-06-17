@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Live Match Dashboard</title>
-    <link rel="stylesheet" href="app.css?v=23" />
+    <link rel="stylesheet" href="app.css?v=40" />
   </head>
   <body>
     <main class="app-shell">
@@ -30,7 +30,7 @@
 
     <script src="config.js"></script>
     <script type="module">
-      import { loadState, subscribeState } from "./state.js";
+      import { loadState, subscribeState, buildArenaView } from "./state.js";
 
       const grid = document.querySelector("#viewerGrid");
       const title = document.querySelector("#viewerTitle");
@@ -43,7 +43,8 @@
         `).join("")}</div>`;
       }
 
-      function renderArena(arena) {
+      function renderArena(arenaData) {
+        const arena = buildArenaView(arenaData);
         return `
           <article class="match-card ${arena.color}">
             <header class="arena-head"><h2>${arena.name}</h2></header>
