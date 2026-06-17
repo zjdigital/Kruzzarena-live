@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Admin Panel</title>
-    <link rel="stylesheet" href="app.css?v=30" />
+    <link rel="stylesheet" href="app.css?v=40" />
   </head>
   <body>
     <main class="app-shell admin-shell">
@@ -35,7 +35,6 @@
             <input id="subtitle" name="subtitle" />
           </label>
           <button id="saveAllBtn" class="button" type="button">Simpan Semua</button>
-          <button id="resetBtn" class="button danger" type="button">Reset Data</button>
         </div>
       </section>
 
@@ -78,6 +77,25 @@
               <span>Set Nomor Partai Aktif</span>
               <input id="modalArenaCurrent" inputmode="numeric" />
             </label>
+
+            <div class="modal-setting-grid">
+              <label class="field">
+                <span>Jumlah Partai</span>
+                <input id="modalArenaTotal" inputmode="numeric" />
+              </label>
+              <label class="field">
+                <span>Masuk Area Pertandingan</span>
+                <input id="modalArenaAreaCount" inputmode="numeric" />
+              </label>
+              <label class="field">
+                <span>Masuk Ruang Tunggu</span>
+                <input id="modalArenaWaitingCount" inputmode="numeric" />
+              </label>
+              <label class="field">
+                <span>Mohon Bersiap</span>
+                <input id="modalArenaReadyCount" inputmode="numeric" />
+              </label>
+            </div>
           </div>
 
           <footer class="modal-actions">
@@ -94,7 +112,7 @@
 
     <script src="config.js"></script>
     <script type="module">
-      import { loadState, saveState, resetState, makeArena } from "./state.js";
+      import { buildArenaView, defaultArenaSettings, loadState, makeArena, saveState } from "./state.js";
 
       if (sessionStorage.getItem("kruzzarena-admin") !== "true") {
         window.location.href = "index.html";
@@ -102,7 +120,7 @@
 
       let currentState = await loadState();
       let activeArenaIndex = null;
-      const form = document.querySelector("#adminForm");
+
       const eventName = document.querySelector("#eventName");
       const subtitle = document.querySelector("#subtitle");
       const editors = document.querySelector("#arenaEditors");
@@ -111,23 +129,36 @@
       const modalTitle = document.querySelector("#modalTitle");
       const modalArenaName = document.querySelector("#modalArenaName");
       const modalArenaCurrent = document.querySelector("#modalArenaCurrent");
+      const modalArenaTotal = document.querySelector("#modalArenaTotal");
+      const modalArenaAreaCount = document.querySelector("#modalArenaAreaCount");
+      const modalArenaWaitingCount = document.querySelector("#modalArenaWaitingCount");
+      const modalArenaReadyCount = document.querySelector("#modalArenaReadyCount");
       const deleteArenaBtn = document.querySelector("#deleteArenaBtn");
 
-      function inputName(arenaIndex, group, index = "") {
-        return `arena-${arenaIndex}-${group}${index !== "" ? `-${index}` : ""}`;
+      function numberValue(value, fallback, min, max) {
+        const number = Math.round(Number(value));
+        if (!Number.isFinite(number)) return fallback;
+        return Math.min(Math.max(number, min), max);
       }
 
-      function makeQueueInputs(arenaIndex, group, count) {
-        return Array.from({ length: count }, (_, index) => `
-          <input class="queue-input" name="${inputName(arenaIndex, group, index)}" inputmode="numeric" placeholder="-" aria-label="${group} kotak ${index + 1}" />
-        `).join("");
+      function collectState() {
+        return {
+          ...currentState,
+          eventName: eventName.value,
+          subtitle: subtitle.value
+        };
       }
 
-      function renderEditors(state) {
-        eventName.value = state.eventName;
-        subtitle.value = state.subtitle;
+      function renderBoxes(items, className, columns) {
+        return `<div class="operator-row ${columns} ${className}">${items.map((item) => `
+          <div class="operator-box ${className} ${item ? "" : "empty"}">${item || "-"}</div>
+        `).join("")}</div>`;
+      }
 
-        editors.innerHTML = state.arenas.map((arena, arenaIndex) => `
+      function renderArenaCard(arenaData, arenaIndex) {
+        const arena = buildArenaView(arenaData);
+
+        return `
           <article class="operator-card ${arena.color}">
             <header class="operator-head">
               <h2>${arena.name}</h2>
@@ -136,137 +167,64 @@
 
             <div class="operator-current">
               <span>Partai</span>
-              <input name="${inputName(arenaIndex, "current")}" inputmode="numeric" aria-label="Partai aktif ${arena.name}" />
+              <strong>${arena.current || "-"}</strong>
             </div>
 
             <div class="operator-section">
               <h3>Masuk Area Pertandingan</h3>
-              <div class="operator-row two">${makeQueueInputs(arenaIndex, "area", 2)}</div>
+              ${renderBoxes(arena.area, "area", "two")}
             </div>
 
             <div class="operator-section">
               <h3>Ruang Tunggu</h3>
-              <div class="operator-row ten waiting">${makeQueueInputs(arenaIndex, "waiting", 10)}</div>
+              ${renderBoxes(arena.waiting, "waiting", "auto")}
             </div>
 
             <div class="operator-section">
               <h3>Mohon Bersiap</h3>
-              <div class="operator-row ten ready">${makeQueueInputs(arenaIndex, "ready", 10)}</div>
+              ${renderBoxes(arena.ready, "ready", "auto")}
             </div>
 
-           <div class="operator-actions three">
-  <button class="button secondary compact back-arena-btn" type="button" data-index="${arenaIndex}">Back</button>
-  <button class="button warning compact reset-arena-btn" type="button" data-index="${arenaIndex}">Reset</button>
-  <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
-</div>
+            <div class="operator-actions">
+              <button class="button secondary compact back-arena-btn" type="button" data-index="${arenaIndex}">Back</button>
+              <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
+            </div>
           </article>
-        `).join("");
+        `;
+      }
 
-        state.arenas.forEach((arena, arenaIndex) => {
-          form.elements[inputName(arenaIndex, "current")].value = arena.current;
-          arena.area.forEach((item, index) => form.elements[inputName(arenaIndex, "area", index)].value = item);
-          arena.waiting.forEach((item, index) => form.elements[inputName(arenaIndex, "waiting", index)].value = item);
-          arena.ready.forEach((item, index) => form.elements[inputName(arenaIndex, "ready", index)].value = item);
-        });
+      function renderEditors(state) {
+        eventName.value = state.eventName;
+        subtitle.value = state.subtitle;
+        editors.innerHTML = state.arenas.map(renderArenaCard).join("");
 
         document.querySelectorAll(".edit-arena-btn").forEach((button) => {
           button.addEventListener("click", () => openArenaModal(Number(button.dataset.index)));
         });
         document.querySelectorAll(".back-arena-btn").forEach((button) => {
-          button.addEventListener("click", () => backArena(Number(button.dataset.index)));
+          button.addEventListener("click", () => moveArena(Number(button.dataset.index), -1));
         });
         document.querySelectorAll(".next-arena-btn").forEach((button) => {
-          button.addEventListener("click", () => nextArena(Number(button.dataset.index)));
+          button.addEventListener("click", () => moveArena(Number(button.dataset.index), 1));
         });
-        document.querySelectorAll(".reset-arena-btn").forEach((button) => {
-  button.addEventListener("click", () => resetArena(Number(button.dataset.index)));
-});
-        async function resetArena(arenaIndex) {
-  if (!confirm("Kosongkan semua nomor pada lapangan ini?")) return;
-
-  const nextState = collectState();
-  nextState.arenas[arenaIndex] = {
-    ...nextState.arenas[arenaIndex],
-    current: "",
-    area: ["", ""],
-    waiting: ["", "", "", "", "", "", "", "", "", ""],
-    ready: ["", "", "", "", "", "", "", "", "", ""]
-  };
-
-  currentState = await saveState(nextState);
-  renderEditors(currentState);
-  showToast(`${currentState.arenas[arenaIndex].name} berhasil di-reset.`);
-}
       }
 
-      function collectState() {
-        return {
-          ...currentState,
-          eventName: eventName.value,
-          subtitle: subtitle.value,
-          arenas: currentState.arenas.map((arena, arenaIndex) => ({
-            ...arena,
-            current: form.elements[inputName(arenaIndex, "current")].value,
-            area: Array.from({ length: 2 }, (_, index) => form.elements[inputName(arenaIndex, "area", index)].value),
-            waiting: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "waiting", index)].value),
-            ready: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "ready", index)].value)
-          }))
-        };
-      }
-
-      function advanceQueue(arena) {
-        const filledQueue = [...arena.area, ...arena.waiting, ...arena.ready]
-          .map((item) => String(item || "").trim())
-          .filter(Boolean);
-        const nextCurrent = filledQueue[0] || "";
-        const shifted = filledQueue.slice(1).concat(Array(22).fill(""));
-
-        return {
-          ...arena,
-          current: nextCurrent,
-          area: shifted.slice(0, 2),
-          waiting: shifted.slice(2, 12),
-          ready: shifted.slice(12, 22)
-        };
-      }
-
-      function previousPartai(value) {
-        const number = Number(String(value || "").trim());
-        if (!Number.isFinite(number) || number <= 1) return "";
-        return String(number - 1);
-      }
-
-      function backQueue(arena) {
-        const shifted = [
-          String(arena.current || "").trim(),
-          ...arena.area,
-          ...arena.waiting,
-          ...arena.ready
-        ].map((item) => String(item || "").trim()).slice(0, 22);
-
-        return {
-          ...arena,
-          current: previousPartai(arena.current),
-          area: shifted.slice(0, 2),
-          waiting: shifted.slice(2, 12),
-          ready: shifted.slice(12, 22)
-        };
-      }
-
-      async function nextArena(arenaIndex) {
+      async function moveArena(arenaIndex, direction) {
         const nextState = collectState();
-        nextState.arenas[arenaIndex] = advanceQueue(nextState.arenas[arenaIndex]);
+        const arena = nextState.arenas[arenaIndex];
+        const current = numberValue(arena.current, defaultArenaSettings.current, 1, arena.totalMatches);
+        const nextCurrent = direction > 0
+          ? Math.min(current + 1, arena.totalMatches)
+          : Math.max(current - 1, 1);
+
+        nextState.arenas[arenaIndex] = {
+          ...arena,
+          current: nextCurrent
+        };
+
         currentState = await saveState(nextState);
         renderEditors(currentState);
-        showToast(`NEXT ${currentState.arenas[arenaIndex].name} berhasil.`);
-      }
-
-      async function backArena(arenaIndex) {
-        const nextState = collectState();
-        nextState.arenas[arenaIndex] = backQueue(nextState.arenas[arenaIndex]);
-        currentState = await saveState(nextState);
-        renderEditors(currentState);
-        showToast(`BACK ${currentState.arenas[arenaIndex].name} berhasil.`);
+        showToast(`${direction > 0 ? "NEXT" : "BACK"} ${currentState.arenas[arenaIndex].name} berhasil.`);
       }
 
       async function saveAndRender(message) {
@@ -287,6 +245,10 @@
         modalTitle.textContent = `Edit ${arena.name}`;
         modalArenaName.value = arena.name;
         modalArenaCurrent.value = arena.current;
+        modalArenaTotal.value = arena.totalMatches;
+        modalArenaAreaCount.value = arena.areaCount;
+        modalArenaWaitingCount.value = arena.waitingCount;
+        modalArenaReadyCount.value = arena.readyCount;
         document.querySelector(`input[name="modalArenaColor"][value="${arena.color}"]`).checked = true;
         deleteArenaBtn.disabled = currentState.arenas.length <= 1;
         modal.classList.add("show");
@@ -299,7 +261,7 @@
         activeArenaIndex = null;
       }
 
-      document.querySelector("#saveAllBtn").addEventListener("click", () => saveAndRender("Semua data berhasil disimpan."));
+      document.querySelector("#saveAllBtn").addEventListener("click", () => saveAndRender("Judul event berhasil disimpan."));
 
       document.querySelector("#addArenaBtn").addEventListener("click", async () => {
         const baseState = collectState();
@@ -319,12 +281,20 @@
       document.querySelector("#saveModalBtn").addEventListener("click", async () => {
         const nextState = collectState();
         const selectedColor = document.querySelector('input[name="modalArenaColor"]:checked').value;
+        const totalMatches = numberValue(modalArenaTotal.value, defaultArenaSettings.totalMatches, 1, 999);
+        const current = numberValue(modalArenaCurrent.value, defaultArenaSettings.current, 1, totalMatches);
+
         nextState.arenas[activeArenaIndex] = {
           ...nextState.arenas[activeArenaIndex],
           name: modalArenaName.value,
           color: selectedColor,
-          current: modalArenaCurrent.value
+          current,
+          totalMatches,
+          areaCount: numberValue(modalArenaAreaCount.value, defaultArenaSettings.areaCount, 0, 20),
+          waitingCount: numberValue(modalArenaWaitingCount.value, defaultArenaSettings.waitingCount, 0, 30),
+          readyCount: numberValue(modalArenaReadyCount.value, defaultArenaSettings.readyCount, 0, 30)
         };
+
         currentState = await saveState(nextState);
         renderEditors(currentState);
         closeArenaModal();
@@ -332,19 +302,16 @@
       });
 
       document.querySelector("#clearArenaBtn").addEventListener("click", async () => {
-        if (!confirm("Kosongkan semua nomor pada lapangan ini?")) return;
+        if (!confirm("Reset partai aktif lapangan ini ke nomor 1?")) return;
         const nextState = collectState();
         nextState.arenas[activeArenaIndex] = {
           ...nextState.arenas[activeArenaIndex],
-          current: "",
-          area: ["", ""],
-          waiting: ["", "", "", "", "", "", "", "", "", ""],
-          ready: ["", "", "", "", "", "", "", "", "", ""]
+          current: 1
         };
         currentState = await saveState(nextState);
         renderEditors(currentState);
         closeArenaModal();
-        showToast("Lapangan berhasil dikosongkan.");
+        showToast("Lapangan berhasil di-reset ke partai 1.");
       });
 
       deleteArenaBtn.addEventListener("click", async () => {
@@ -356,13 +323,6 @@
         renderEditors(currentState);
         closeArenaModal();
         showToast("Lapangan berhasil dihapus.");
-      });
-
-      document.querySelector("#resetBtn").addEventListener("click", async () => {
-        if (!confirm("Reset semua jadwal ke contoh awal?")) return;
-        currentState = await resetState();
-        renderEditors(currentState);
-        showToast("Data jadwal berhasil di-reset.");
       });
 
       document.querySelector("#closeModalBtn").addEventListener("click", closeArenaModal);
