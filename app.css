@@ -109,6 +109,18 @@ select {
   border-color: rgba(255, 45, 29, .55);
 }
 
+.button.warning {
+  background: rgba(255, 200, 50, .1);
+  border-color: rgba(255, 200, 50, .55);
+  color: #ffe37a;
+}
+
+.button.compact {
+  min-height: 34px;
+  padding: 0 14px;
+  font-size: 12px;
+}
+
 .login-wrap {
   min-height: 100vh;
   display: grid;
@@ -233,11 +245,16 @@ select {
 }
 
 .viewer-logo-img {
-  height: 46px;
-  max-width: 180px;
   width: auto;
+  height: 46px;
+  max-width: 200px;
   object-fit: contain;
   display: block;
+}
+
+.viewer-logo-img.logo-square {
+  height: 54px;
+  max-width: 78px;
 }
 
 .viewer-logo {
@@ -273,7 +290,7 @@ select {
   width: min(1164px, 100%);
   margin: 0 auto;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
   gap: 16px;
 }
 
@@ -291,6 +308,7 @@ select {
 .match-card.blue {
   border-color: rgba(35, 135, 255, .72);
 }
+
 .match-card.green {
   border-color: #22ff80;
   box-shadow: 0 20px 54px rgba(0, 0, 0, .38), 0 0 30px rgba(34, 255, 128, .22);
@@ -330,16 +348,11 @@ select {
   color: var(--blue);
   box-shadow: inset 0 0 36px rgba(35, 135, 255, .13), 0 0 24px rgba(35, 135, 255, .2);
 }
+
 .green .current-match {
   color: #22ff80;
   border-color: #22ff80;
   box-shadow: inset 0 0 36px rgba(34, 255, 128, .15), 0 0 24px rgba(34, 255, 128, .24);
-}
-.green .box-number.area,
-.green .box-number.ready {
-  color: #22ff80;
-  border-color: #22ff80;
-  text-shadow: 0 0 14px rgba(34, 255, 128, .8);
 }
 
 .current-label {
@@ -406,6 +419,13 @@ select {
   text-shadow: 0 0 14px rgba(35, 135, 255, .78);
 }
 
+.green .box-number.area,
+.green .box-number.ready {
+  color: #22ff80;
+  border-color: #22ff80;
+  text-shadow: 0 0 14px rgba(34, 255, 128, .8);
+}
+
 .box-number.waiting {
   color: var(--gold);
   text-shadow: 0 0 14px rgba(255, 228, 92, .76);
@@ -431,6 +451,10 @@ select {
   display: grid;
   grid-template-columns: 320px minmax(0, 1fr);
   gap: 16px;
+}
+
+.admin-hero {
+  margin-top: 0;
 }
 
 .admin-panel,
@@ -468,6 +492,30 @@ select {
   margin: 0 0 14px;
   font-size: 26px;
   text-transform: uppercase;
+}
+
+.arena-editor.red {
+  border-color: rgba(255, 45, 29, .34);
+}
+
+.arena-editor.blue {
+  border-color: rgba(35, 135, 255, .34);
+}
+
+.arena-editor.green {
+  border-color: rgba(34, 255, 128, .34);
+}
+
+.arena-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.arena-editor-head h2 {
+  margin: 0;
 }
 
 .mini-grid {
@@ -517,6 +565,116 @@ select {
   transform: translateY(0);
 }
 
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(1, 4, 12, .76);
+  backdrop-filter: blur(10px);
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-card {
+  width: min(520px, 100%);
+  overflow: hidden;
+  background: rgba(8, 13, 31, .98);
+  border: 1px solid rgba(91, 129, 255, .35);
+  border-radius: 10px;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, .55);
+}
+
+.modal-head,
+.modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-actions {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  border-bottom: 0;
+  flex-wrap: wrap;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.modal-body {
+  display: grid;
+  gap: 18px;
+  padding: 22px;
+}
+
+.icon-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, .75);
+  background: rgba(255, 255, 255, .04);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.theme-option {
+  min-height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, .045);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.theme-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-option.red {
+  color: #ff6b62;
+  border-color: rgba(255, 45, 29, .35);
+}
+
+.theme-option.blue {
+  color: #61adff;
+  border-color: rgba(35, 135, 255, .35);
+}
+
+.theme-option.green {
+  color: #3ff2a3;
+  border-color: rgba(34, 255, 128, .35);
+}
+
+.theme-option:has(input:checked) {
+  background: rgba(35, 135, 255, .16);
+  border-color: currentColor;
+  box-shadow: 0 0 22px rgba(35, 135, 255, .18);
+}
+
 @media (max-width: 1100px) {
   .viewer-grid,
   .admin-layout {
@@ -526,6 +684,8 @@ select {
   .admin-panel {
     position: static;
   }
+}
+
 @media (max-width: 680px) {
   .app-shell {
     padding: 14px;
@@ -543,6 +703,12 @@ select {
     padding: 18px 14px;
   }
 
+  .viewer-logo-img,
+  .viewer-logo-img.logo-square {
+    height: 38px;
+    max-width: 150px;
+  }
+
   .current-match {
     min-height: 180px;
   }
@@ -552,37 +718,14 @@ select {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .theme-options,
+  .arena-editor-head {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .login-card {
     padding: 30px 22px;
   }
-
-  .viewer-logo-img {
-    height: 44px;
-    max-width: 180px;
-    object-fit: contain;
-  }
 }
-
-/* Warna hijau Lapangan C */
-.match-card.green {
-  border-color: #22ff80 !important;
-  box-shadow: 0 20px 54px rgba(0, 0, 0, .38), 0 0 32px rgba(34, 255, 128, .25) !important;
-}
-
-.match-card.green .current-match {
-  color: #22ff80 !important;
-  border-color: #22ff80 !important;
-  box-shadow: inset 0 0 36px rgba(34, 255, 128, .15), 0 0 24px rgba(34, 255, 128, .24) !important;
-}
-
-.match-card.green .box-number.area,
-.match-card.green .box-number.ready {
-  color: #22ff80 !important;
-  border-color: #22ff80 !important;
-  text-shadow: 0 0 14px rgba(34, 255, 128, .8) !important;
-}
-
-.match-card.green .arena-head {
-  border-bottom-color: rgba(34, 255, 128, .35) !important;
-}
-
