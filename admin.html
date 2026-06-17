@@ -155,7 +155,7 @@
             </div>
 
             <div class="operator-actions">
-              <button class="button secondary compact save-arena-btn" type="button" data-index="${arenaIndex}">Simpan</button>
+              <button class="button secondary compact back-arena-btn" type="button" data-index="${arenaIndex}">Back</button>
               <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
             </div>
           </article>
@@ -171,8 +171,8 @@
         document.querySelectorAll(".edit-arena-btn").forEach((button) => {
           button.addEventListener("click", () => openArenaModal(Number(button.dataset.index)));
         });
-        document.querySelectorAll(".save-arena-btn").forEach((button) => {
-          button.addEventListener("click", () => saveAndRender("Data lapangan disimpan."));
+        document.querySelectorAll(".back-arena-btn").forEach((button) => {
+          button.addEventListener("click", () => backArena(Number(button.dataset.index)));
         });
         document.querySelectorAll(".next-arena-btn").forEach((button) => {
           button.addEventListener("click", () => nextArena(Number(button.dataset.index)));
@@ -210,12 +210,43 @@
         };
       }
 
+      function previousPartai(value) {
+        const number = Number(String(value || "").trim());
+        if (!Number.isFinite(number) || number <= 1) return "";
+        return String(number - 1);
+      }
+
+      function backQueue(arena) {
+        const shifted = [
+          String(arena.current || "").trim(),
+          ...arena.area,
+          ...arena.waiting,
+          ...arena.ready
+        ].map((item) => String(item || "").trim()).slice(0, 22);
+
+        return {
+          ...arena,
+          current: previousPartai(arena.current),
+          area: shifted.slice(0, 2),
+          waiting: shifted.slice(2, 12),
+          ready: shifted.slice(12, 22)
+        };
+      }
+
       async function nextArena(arenaIndex) {
         const nextState = collectState();
         nextState.arenas[arenaIndex] = advanceQueue(nextState.arenas[arenaIndex]);
         currentState = await saveState(nextState);
         renderEditors(currentState);
         showToast(`NEXT ${currentState.arenas[arenaIndex].name} berhasil.`);
+      }
+
+      async function backArena(arenaIndex) {
+        const nextState = collectState();
+        nextState.arenas[arenaIndex] = backQueue(nextState.arenas[arenaIndex]);
+        currentState = await saveState(nextState);
+        renderEditors(currentState);
+        showToast(`BACK ${currentState.arenas[arenaIndex].name} berhasil.`);
       }
 
       async function saveAndRender(message) {
