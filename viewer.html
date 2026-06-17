@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KRUZZARENA Live Match Dashboard</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="viewer-header">
+        <div class="viewer-logos" aria-hidden="true">
+          <div class="viewer-logo">UBC</div>
+          <div class="viewer-logo">KRUZZARENA</div>
+          <div class="viewer-logo">UNCHALL</div>
+          <div class="viewer-logo">DSS</div>
+          <div class="viewer-logo">ULTIMATE</div>
+        </div>
+        <h1 id="viewerTitle" class="viewer-title">KRUZZARENA LIVE MATCH DASHBOARD</h1>
+        <p id="viewerSubtitle" class="viewer-subtitle">TAEKWONDO ULTIMATE BANDAE CHALLENGE</p>
+      </section>
+
+      <section id="viewerGrid" class="viewer-grid" aria-live="polite"></section>
+
+      <footer class="viewer-footer">
+        <span>Viewer Mode</span>
+        <span id="clock">00.00.00</span>
+      </footer>
+    </main>
+
+    <script src="config.js"></script>
+    <script type="module">
+      import { loadState, subscribeState } from "./state.js";
+
+      const grid = document.querySelector("#viewerGrid");
+      const title = document.querySelector("#viewerTitle");
+      const subtitle = document.querySelector("#viewerSubtitle");
+      const clock = document.querySelector("#clock");
+
+      function renderBoxes(items, className, columns) {
+        return `<div class="number-row ${columns}">${items.map((item) => `
+          <div class="box-number ${className} ${item ? "" : "empty"}">${item || "-"}</div>
+        `).join("")}</div>`;
+      }
+
+      function renderArena(arena) {
+        return `
+          <article class="match-card ${arena.color}">
+            <header class="arena-head"><h2>${arena.name}</h2></header>
+            <div class="current-match">
+              <div>
+                <span class="current-label">Partai</span>
+                <span class="current-number">${arena.current || "-"}</span>
+              </div>
+            </div>
+            <h3 class="section-label">Masuk Area Pertandingan</h3>
+            ${renderBoxes(arena.area, "area", "cols-2")}
+            <h3 class="section-label">Mohon Bersiap</h3>
+            ${renderBoxes(arena.ready, "ready", "cols-5")}
+            <h3 class="section-label">Masuk Ruang Tunggu</h3>
+            ${renderBoxes(arena.waiting, "waiting", "cols-5")}
+          </article>
+        `;
+      }
+
+      function render(state) {
+        title.textContent = state.eventName;
+        subtitle.textContent = state.subtitle;
+        grid.innerHTML = state.arenas.map(renderArena).join("");
+      }
+
+      function tick() {
+        const now = new Date();
+        clock.textContent = now.toLocaleTimeString("id-ID", { hour12: false }).replaceAll(":", ".");
+      }
+
+      render(await loadState());
+      await subscribeState(render);
+      tick();
+      setInterval(tick, 1000);
+    </script>
+  </body>
+</html>

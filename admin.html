@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KRUZZARENA Admin Panel</title>
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <nav class="topbar">
+        <div class="brand"><i class="brand-mark"></i>KRUZZ<span>ARENA</span> - Admin Panel</div>
+        <div class="top-actions">
+          <a class="button secondary" href="viewer.html" target="_blank">Lihat Live</a>
+          <button id="logoutBtn" class="button secondary" type="button">Keluar</button>
+        </div>
+      </nav>
+
+      <form id="adminForm" class="admin-layout">
+        <aside class="admin-panel">
+          <h1 class="panel-title">Pengaturan Event</h1>
+          <div class="form-stack">
+            <label class="field">
+              <span>Nama Event</span>
+              <input id="eventName" name="eventName" />
+            </label>
+            <label class="field">
+              <span>Subjudul</span>
+              <input id="subtitle" name="subtitle" />
+            </label>
+            <button class="button" type="submit">Simpan ke Viewer</button>
+            <button id="resetBtn" class="button danger" type="button">Reset Data</button>
+            <p class="hint">Input boleh dikosongkan. Kotak kosong akan tampil sebagai tanda strip di viewer.</p>
+          </div>
+        </aside>
+
+        <section id="arenaEditors" class="arena-editors"></section>
+      </form>
+      <div id="toast" class="toast">Data berhasil disimpan ke viewer.</div>
+    </main>
+
+    <script src="config.js"></script>
+    <script type="module">
+      import { loadState, saveState, resetState } from "./state.js";
+
+      if (sessionStorage.getItem("kruzzarena-admin") !== "true") {
+        window.location.href = "index.html";
+      }
+
+      let currentState = await loadState();
+      const form = document.querySelector("#adminForm");
+      const eventName = document.querySelector("#eventName");
+      const subtitle = document.querySelector("#subtitle");
+      const editors = document.querySelector("#arenaEditors");
+      const toast = document.querySelector("#toast");
+
+      function inputName(arenaIndex, group, index = "") {
+        return `arena-${arenaIndex}-${group}${index !== "" ? `-${index}` : ""}`;
+      }
+
+      function makeInputs(arenaIndex, group, count) {
+        return Array.from({ length: count }, (_, index) => `
+          <label class="field">
+            <span>Kotak ${index + 1}</span>
+            <input name="${inputName(arenaIndex, group, index)}" inputmode="numeric" placeholder="Isi partai" />
+          </label>
+        `).join("");
+      }
+
+      function renderEditors(state) {
+        eventName.value = state.eventName;
+        subtitle.value = state.subtitle;
+        editors.innerHTML = state.arenas.map((arena, arenaIndex) => `
+          <article class="arena-editor">
+            <h2>${arena.name}</h2>
+            <div class="mini-grid grid-2">
+              <label class="field">
+                <span>Nama Lapangan</span>
+                <input name="${inputName(arenaIndex, "name")}" value="${arena.name}" />
+              </label>
+              <label class="field">
+                <span>Warna Lapangan</span>
+                <select name="${inputName(arenaIndex, "color")}">
+                  <option value="red" ${arena.color === "red" ? "selected" : ""}>Merah</option>
+                  <option value="blue" ${arena.color === "blue" ? "selected" : ""}>Biru</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="admin-section">
+              <h3>Partai Sedang Tanding</h3>
+              <label class="field">
+                <span>Nomor Partai</span>
+                <input name="${inputName(arenaIndex, "current")}" inputmode="numeric" placeholder="Contoh: 7" />
+              </label>
+            </div>
+
+            <div class="admin-section">
+              <h3>Masuk Area Pertandingan - 2 Kotak</h3>
+              <div class="mini-grid grid-2">${makeInputs(arenaIndex, "area", 2)}</div>
+            </div>
+
+            <div class="admin-section">
+              <h3>Mohon Bersiap - 10 Kotak</h3>
+              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "ready", 10)}</div>
+            </div>
+
+            <div class="admin-section">
+              <h3>Ruang Tunggu - 10 Kotak</h3>
+              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "waiting", 10)}</div>
+            </div>
+          </article>
+        `).join("");
+
+        state.arenas.forEach((arena, arenaIndex) => {
+          form.elements[inputName(arenaIndex, "current")].value = arena.current;
+          arena.area.forEach((item, index) => form.elements[inputName(arenaIndex, "area", index)].value = item);
+          arena.ready.forEach((item, index) => form.elements[inputName(arenaIndex, "ready", index)].value = item);
+          arena.waiting.forEach((item, index) => form.elements[inputName(arenaIndex, "waiting", index)].value = item);
+        });
+      }
+
+      function collectState() {
+        return {
+          ...currentState,
+          eventName: eventName.value,
+          subtitle: subtitle.value,
+          arenas: currentState.arenas.map((arena, arenaIndex) => ({
+            ...arena,
+            name: form.elements[inputName(arenaIndex, "name")].value,
+            color: form.elements[inputName(arenaIndex, "color")].value,
+            current: form.elements[inputName(arenaIndex, "current")].value,
+            area: Array.from({ length: 2 }, (_, index) => form.elements[inputName(arenaIndex, "area", index)].value),
+            ready: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "ready", index)].value),
+            waiting: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "waiting", index)].value)
+          }))
+        };
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2200);
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        currentState = await saveState(collectState());
+        showToast("Data berhasil disimpan ke viewer.");
+      });
+
+      document.querySelector("#resetBtn").addEventListener("click", async () => {
+        if (!confirm("Reset semua jadwal ke contoh awal?")) return;
+        currentState = await resetState();
+        renderEditors(currentState);
+        showToast("Data jadwal berhasil di-reset.");
+      });
+
+      document.querySelector("#logoutBtn").addEventListener("click", () => {
+        sessionStorage.removeItem("kruzzarena-admin");
+        window.location.href = "index.html";
+      });
+
+      renderEditors(currentState);
+    </script>
+  </body>
+</html>
