@@ -533,4 +533,9 @@ select {
   .login-card {
     padding: 30px 22px;
   }
+  .viewer-logo-img {
+  height: 44px;
+  max-width: 180px;
+  object-fit: contain;
+}
 }
