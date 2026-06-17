@@ -1,57 +1,103 @@
-const STORAGE_KEY = "kruzzarena-live-dashboard-v1";
+const STORAGE_KEY = "kruzzarena-live-dashboard-v2-auto-queue";
 const CHANNEL_KEY = "kruzzarena-live-sync";
 const firebaseConfig = window.KRUZZARENA_CONFIG?.firebase;
 
-export const makeArena = (name = "Lapangan Baru", color = "red") => ({
-  name,
-  color,
-  current: "",
-  area: ["", ""],
-  ready: ["", "", "", "", "", "", "", "", "", ""],
-  waiting: ["", "", "", "", "", "", "", "", "", ""]
-});
+export const defaultArenaSettings = {
+  current: 1,
+  totalMatches: 120,
+  areaCount: 2,
+  waitingCount: 5,
+  readyCount: 10
+};
 
-const initialArena = (name, current, area, ready, waiting, color) => ({
+export const makeArena = (name = "Lapangan Baru", color = "red", settings = {}) => ({
   name,
   color,
-  current,
-  area,
-  ready,
-  waiting
+  current: settings.current ?? defaultArenaSettings.current,
+  totalMatches: settings.totalMatches ?? defaultArenaSettings.totalMatches,
+  areaCount: settings.areaCount ?? defaultArenaSettings.areaCount,
+  waitingCount: settings.waitingCount ?? defaultArenaSettings.waitingCount,
+  readyCount: settings.readyCount ?? defaultArenaSettings.readyCount
 });
 
 export const defaultState = {
-  eventName: "KRUZZARENA LIVE MATCH DASHBOARD",
-  subtitle: "TAEKWONDO ULTIMATE BANDAE CHALLENGE",
+  eventName: "TAEKWONDO ULTIMATE BANDAE CHALLENGE 4",
+  subtitle: "KRUZZARENA LIVE MATCH DASHBOARD",
   updatedAt: new Date().toISOString(),
   arenas: [
-    initialArena("Lapangan A", "7", ["8", "9"], ["10", "11", "12", "13", "14", "", "", "", "", ""], ["15", "16", "17", "18", "19", "", "", "", "", ""], "red"),
-    initialArena("Lapangan B", "10", ["11", "12"], ["13", "14", "15", "16", "17", "", "", "", "", ""], ["18", "19", "20", "21", "22", "", "", "", "", ""], "blue"),
-    initialArena("Lapangan C", "4", ["5", "6"], ["7", "8", "9", "10", "11", "", "", "", "", ""], ["12", "13", "14", "15", "16", "", "", "", "", ""], "green")
+    makeArena("Lapangan A", "red", { current: 1, totalMatches: 120, areaCount: 2, waitingCount: 5, readyCount: 10 }),
+    makeArena("Lapangan B", "blue", { current: 10, totalMatches: 120, areaCount: 2, waitingCount: 5, readyCount: 10 }),
+    makeArena("Lapangan C", "green", { current: 4, totalMatches: 120, areaCount: 2, waitingCount: 5, readyCount: 10 })
   ]
 };
 
 let dbApiPromise = null;
 let localChannel = "BroadcastChannel" in window ? new BroadcastChannel(CHANNEL_KEY) : null;
 
+function clampNumber(value, fallback, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(Math.max(Math.trunc(number), min), max);
+}
+
+function maxExistingPartai(arena) {
+  const values = [
+    arena.current,
+    ...(arena.area || []),
+    ...(arena.waiting || []),
+    ...(arena.ready || [])
+  ].map(Number).filter(Number.isFinite);
+  return values.length ? Math.max(...values) : defaultArenaSettings.totalMatches;
+}
+
+function cleanArena(arena = {}, index = 0) {
+  const totalMatches = clampNumber(
+    arena.totalMatches,
+    Math.max(maxExistingPartai(arena), defaultArenaSettings.totalMatches),
+    1,
+    999
+  );
+
+  return {
+    name: String(arena.name || defaultState.arenas[index]?.name || `Lapangan ${index + 1}`).trim(),
+    color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
+    current: clampNumber(arena.current, defaultArenaSettings.current, 1, totalMatches),
+    totalMatches,
+    areaCount: clampNumber(arena.areaCount ?? arena.area?.length, defaultArenaSettings.areaCount, 0, 20),
+    waitingCount: clampNumber(arena.waitingCount ?? arena.waiting?.length, defaultArenaSettings.waitingCount, 0, 30),
+    readyCount: clampNumber(arena.readyCount ?? arena.ready?.length, defaultArenaSettings.readyCount, 0, 30)
+  };
+}
+
 function cleanState(state) {
   const next = structuredClone(state || defaultState);
   next.eventName = String(next.eventName || defaultState.eventName).trim();
   next.subtitle = String(next.subtitle || defaultState.subtitle).trim();
   next.updatedAt = new Date().toISOString();
-  next.arenas = (next.arenas || defaultState.arenas).map((arena, index) => ({
-    name: String(arena.name || defaultState.arenas[index]?.name || `Lapangan ${index + 1}`).trim(),
-    color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
-    current: String(arena.current || "").trim(),
-    area: normalizeList(arena.area, 2),
-    ready: normalizeList(arena.ready, 10),
-    waiting: normalizeList(arena.waiting, 10)
-  }));
+  next.arenas = (next.arenas?.length ? next.arenas : defaultState.arenas).map(cleanArena);
   return next;
 }
 
-function normalizeList(items, length) {
-  return Array.from({ length }, (_, index) => String(items?.[index] || "").trim());
+function numberRange(start, count, totalMatches) {
+  return Array.from({ length: count }, (_, index) => {
+    const value = start + index;
+    return value <= totalMatches ? String(value) : "";
+  });
+}
+
+export function buildArenaView(arena) {
+  const clean = cleanArena(arena);
+  const areaStart = clean.current + 1;
+  const waitingStart = areaStart + clean.areaCount;
+  const readyStart = waitingStart + clean.waitingCount;
+
+  return {
+    ...clean,
+    current: String(clean.current),
+    area: numberRange(areaStart, clean.areaCount, clean.totalMatches),
+    waiting: numberRange(waitingStart, clean.waitingCount, clean.totalMatches),
+    ready: numberRange(readyStart, clean.readyCount, clean.totalMatches)
+  };
 }
 
 async function getFirebaseApi() {
