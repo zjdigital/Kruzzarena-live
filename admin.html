@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Admin Panel</title>
-    <link rel="stylesheet" href="app.css?v=40" />
+    <link rel="stylesheet" href="app.css?v=41" />
   </head>
   <body>
     <main class="app-shell admin-shell">
@@ -162,6 +162,7 @@
           <article class="operator-card ${arena.color}">
             <header class="operator-head">
               <h2>${arena.name}</h2>
+              <p class="operator-total">Total Partai: <strong>${arena.totalMatches}</strong></p>
               <button class="icon-button edit-arena-btn" type="button" data-index="${arenaIndex}" title="Edit lapangan">⚙</button>
             </header>
 
