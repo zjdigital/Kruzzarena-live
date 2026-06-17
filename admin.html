@@ -154,10 +154,11 @@
               <div class="operator-row ten ready">${makeQueueInputs(arenaIndex, "ready", 10)}</div>
             </div>
 
-            <div class="operator-actions">
-              <button class="button secondary compact back-arena-btn" type="button" data-index="${arenaIndex}">Back</button>
-              <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
-            </div>
+           <div class="operator-actions three">
+  <button class="button secondary compact back-arena-btn" type="button" data-index="${arenaIndex}">Back</button>
+  <button class="button warning compact reset-arena-btn" type="button" data-index="${arenaIndex}">Reset</button>
+  <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
+</div>
           </article>
         `).join("");
 
@@ -177,6 +178,25 @@
         document.querySelectorAll(".next-arena-btn").forEach((button) => {
           button.addEventListener("click", () => nextArena(Number(button.dataset.index)));
         });
+        document.querySelectorAll(".reset-arena-btn").forEach((button) => {
+  button.addEventListener("click", () => resetArena(Number(button.dataset.index)));
+});
+        async function resetArena(arenaIndex) {
+  if (!confirm("Kosongkan semua nomor pada lapangan ini?")) return;
+
+  const nextState = collectState();
+  nextState.arenas[arenaIndex] = {
+    ...nextState.arenas[arenaIndex],
+    current: "",
+    area: ["", ""],
+    waiting: ["", "", "", "", "", "", "", "", "", ""],
+    ready: ["", "", "", "", "", "", "", "", "", ""]
+  };
+
+  currentState = await saveState(nextState);
+  renderEditors(currentState);
+  showToast(`${currentState.arenas[arenaIndex].name} berhasil di-reset.`);
+}
       }
 
       function collectState() {
