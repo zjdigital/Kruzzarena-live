@@ -330,6 +330,17 @@ select {
   color: var(--blue);
   box-shadow: inset 0 0 36px rgba(35, 135, 255, .13), 0 0 24px rgba(35, 135, 255, .2);
 }
+.green .current-match {
+  color: #22ff80;
+  border-color: #22ff80;
+  box-shadow: inset 0 0 36px rgba(34, 255, 128, .15), 0 0 24px rgba(34, 255, 128, .24);
+}
+.green .box-number.area,
+.green .box-number.ready {
+  color: #22ff80;
+  border-color: #22ff80;
+  text-shadow: 0 0 14px rgba(34, 255, 128, .8);
+}
 
 .current-label {
   display: block;
