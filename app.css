@@ -911,4 +911,7 @@ select {
   .login-card {
     padding: 30px 22px;
   }
+  .operator-actions.three {
+  grid-template-columns: 1fr 1fr 1.4fr;
+}
 }
