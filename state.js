@@ -32,7 +32,7 @@ function cleanState(state) {
   next.updatedAt = new Date().toISOString();
   next.arenas = (next.arenas || defaultState.arenas).slice(0, 3).map((arena, index) => ({
     name: String(arena.name || defaultState.arenas[index].name).trim(),
-    color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
+    color: arena.color === "blue" ? "blue" : arena.color === "green" ? "green" : "red",
     current: String(arena.current || "").trim(),
     area: normalizeList(arena.area, 2),
     ready: normalizeList(arena.ready, 10),
