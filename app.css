@@ -225,10 +225,19 @@ select {
 
 .viewer-logos {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 14px;
+  gap: 18px;
   flex-wrap: wrap;
   margin-bottom: 16px;
+}
+
+.viewer-logo-img {
+  height: 46px;
+  max-width: 180px;
+  width: auto;
+  object-fit: contain;
+  display: block;
 }
 
 .viewer-logo {
