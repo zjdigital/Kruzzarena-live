@@ -291,6 +291,10 @@ select {
 .match-card.blue {
   border-color: rgba(35, 135, 255, .72);
 }
+.match-card.green {
+  border-color: #22ff80;
+  box-shadow: 0 20px 54px rgba(0, 0, 0, .38), 0 0 30px rgba(34, 255, 128, .22);
+}
 
 .arena-head {
   padding: 20px 14px;
