@@ -2,6 +2,15 @@ const STORAGE_KEY = "kruzzarena-live-dashboard-v1";
 const CHANNEL_KEY = "kruzzarena-live-sync";
 const firebaseConfig = window.KRUZZARENA_CONFIG?.firebase;
 
+export const makeArena = (name = "Lapangan Baru", color = "red") => ({
+  name,
+  color,
+  current: "",
+  area: ["", ""],
+  ready: ["", "", "", "", "", "", "", "", "", ""],
+  waiting: ["", "", "", "", "", "", "", "", "", ""]
+});
+
 const initialArena = (name, current, area, ready, waiting, color) => ({
   name,
   color,
@@ -30,9 +39,9 @@ function cleanState(state) {
   next.eventName = String(next.eventName || defaultState.eventName).trim();
   next.subtitle = String(next.subtitle || defaultState.subtitle).trim();
   next.updatedAt = new Date().toISOString();
-  next.arenas = (next.arenas || defaultState.arenas).slice(0, 3).map((arena, index) => ({
-    name: String(arena.name || defaultState.arenas[index].name).trim(),
-    color: arena.color === "blue" ? "blue" : arena.color === "green" ? "green" : "red",
+  next.arenas = (next.arenas || defaultState.arenas).map((arena, index) => ({
+    name: String(arena.name || defaultState.arenas[index]?.name || `Lapangan ${index + 1}`).trim(),
+    color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
     current: String(arena.current || "").trim(),
     area: normalizeList(arena.area, 2),
     ready: normalizeList(arena.ready, 10),
