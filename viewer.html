@@ -44,24 +44,30 @@
       }
 
       function renderArena(arena) {
-        return `
-          <article class="match-card ${arena.color}">
-            <header class="arena-head"><h2>${arena.name}</h2></header>
-            <div class="current-match">
-              <div>
-                <span class="current-label">Partai</span>
-                <span class="current-number">${arena.current || "-"}</span>
-              </div>
-            </div>
-            <h3 class="section-label">Masuk Area Pertandingan</h3>
-            ${renderBoxes(arena.area, "area", "cols-2")}
-            <h3 class="section-label">RUANG TUNGGU</h3>
-            ${renderBoxes(arena.ready, "ready", "cols-5")}
-            <h3 class="section-label">Mohon Bersiap</h3>
-            ${renderBoxes(arena.waiting, "waiting", "cols-5")}
-          </article>
-        `;
-      }
+  return `
+    <article class="match-card ${arena.color}">
+      <header class="arena-head">
+        <h2>${arena.name}</h2>
+      </header>
+
+      <div class="current-match">
+        <div>
+          <span class="current-label">Partai</span>
+          <span class="current-number">${arena.current || "-"}</span>
+        </div>
+      </div>
+
+      <h3 class="section-label">Masuk Area Pertandingan</h3>
+      ${renderBoxes(arena.area, "area", "cols-2")}
+
+      <h3 class="section-label">Ruang Tunggu</h3>
+      ${renderBoxes(arena.waiting, "waiting", "cols-5")}
+
+      <h3 class="section-label">Mohon Bersiap</h3>
+      ${renderBoxes(arena.ready, "ready", "cols-5")}
+    </article>
+  `;
+}
 
       function render(state) {
         title.textContent = state.eventName;
