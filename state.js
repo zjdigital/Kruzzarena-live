@@ -18,7 +18,7 @@ export const defaultState = {
   arenas: [
     initialArena("Lapangan A", "7", ["8", "9"], ["10", "11", "12", "13", "14", "", "", "", "", ""], ["15", "16", "17", "18", "19", "", "", "", "", ""], "red"),
     initialArena("Lapangan B", "10", ["11", "12"], ["13", "14", "15", "16", "17", "", "", "", "", ""], ["18", "19", "20", "21", "22", "", "", "", "", ""], "blue"),
-    initialArena("Lapangan C", "4", ["5", "6"], ["7", "8", "9", "10", "11", "", "", "", "", ""], ["12", "13", "14", "15", "16", "", "", "", "", ""], "red")
+    initialArena("Lapangan C", "4", ["5", "6"], ["7", "8", "9", "10", "11", "", "", "", "", ""], ["12", "13", "14", "15", "16", "", "", "", "", ""], "green")
   ]
 };
 
@@ -32,7 +32,7 @@ function cleanState(state) {
   next.updatedAt = new Date().toISOString();
   next.arenas = (next.arenas || defaultState.arenas).slice(0, 3).map((arena, index) => ({
     name: String(arena.name || defaultState.arenas[index].name).trim(),
-    color: arena.color === "blue" ? "blue" : "red",
+    color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
     current: String(arena.current || "").trim(),
     area: normalizeList(arena.area, 2),
     ready: normalizeList(arena.ready, 10),
