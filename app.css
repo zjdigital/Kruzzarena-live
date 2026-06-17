@@ -476,7 +476,7 @@ select {
 
 .admin-title-fields {
   display: grid;
-  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr) auto auto;
+  grid-template-columns: minmax(260px, 1fr) minmax(260px, 1fr) auto;
   gap: 10px;
   align-items: end;
 }
@@ -552,37 +552,34 @@ select {
   text-align: center;
 }
 
-.operator-current input {
-  width: 100%;
-  border: 0;
-  background: transparent;
+.operator-current strong {
+  display: block;
   color: currentColor;
   text-align: center;
   font-size: clamp(54px, 5vw, 82px);
   line-height: .9;
   font-weight: 900;
-  outline: none;
 }
 
 .red .operator-current,
-.red .operator-row.two .queue-input,
-.red .operator-row.ten.ready .queue-input {
+.red .operator-row.two .operator-box,
+.red .operator-box.ready {
   color: #ff3328;
 }
 
 .blue .operator-current,
-.blue .operator-row.two .queue-input,
-.blue .operator-row.ten.ready .queue-input {
+.blue .operator-row.two .operator-box,
+.blue .operator-box.ready {
   color: #2387ff;
 }
 
 .green .operator-current,
-.green .operator-row.two .queue-input,
-.green .operator-row.ten.ready .queue-input {
+.green .operator-row.two .operator-box,
+.green .operator-box.ready {
   color: #22ff80;
 }
 
-.operator-row.ten.waiting .queue-input {
+.operator-box.waiting {
   color: var(--gold);
 }
 
@@ -608,11 +605,13 @@ select {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.operator-row.ten {
+.operator-row.ten,
+.operator-row.auto {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
-.queue-input {
+.queue-input,
+.operator-box {
   min-width: 0;
   height: 44px;
   border: 1px solid currentColor;
@@ -623,6 +622,15 @@ select {
   font-size: clamp(20px, 1.9vw, 30px);
   font-weight: 900;
   outline: none;
+}
+
+.operator-box {
+  display: grid;
+  place-items: center;
+}
+
+.operator-box.empty {
+  opacity: .45;
 }
 
 .operator-actions {
@@ -765,7 +773,7 @@ select {
 }
 
 .modal-card {
-  width: min(520px, 100%);
+  width: min(640px, 100%);
   overflow: hidden;
   background: rgba(8, 13, 31, .98);
   border: 1px solid rgba(91, 129, 255, .35);
@@ -801,6 +809,12 @@ select {
   display: grid;
   gap: 18px;
   padding: 22px;
+}
+
+.modal-setting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .icon-button {
@@ -902,6 +916,7 @@ select {
   }
 
   .theme-options,
+  .modal-setting-grid,
   .arena-editor-head {
     grid-template-columns: 1fr;
     flex-direction: column;
@@ -911,7 +926,4 @@ select {
   .login-card {
     padding: 30px 22px;
   }
-  .operator-actions.three {
-  grid-template-columns: 1fr 1fr 1.4fr;
-}
 }
