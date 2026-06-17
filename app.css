@@ -777,5 +777,91 @@ select {
     transform: translateY(-2px);
     filter: brightness(1.16);
   }
+/* Mode layar penuh laptop/PC agar 3 lapangan terlihat full */
+@media (min-width: 1000px) {
+  .app-shell {
+    padding: 10px 20px 8px;
+  }
+
+  .viewer-header {
+    width: min(1455px, 100%);
+    margin: 6px auto 14px;
+    padding: 14px 24px 12px;
+  }
+
+  .viewer-logos {
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .viewer-logo-img {
+    height: 34px;
+    max-width: 170px;
+  }
+
+  .viewer-logo-img.logo-square {
+    height: 42px;
+    max-width: 64px;
+  }
+
+  .viewer-title {
+    font-size: clamp(34px, 3.8vw, 64px);
+    line-height: .92;
+  }
+
+  .viewer-subtitle {
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  .viewer-grid {
+    width: min(1455px, 100%);
+    gap: 18px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .arena-head {
+    padding: 16px 12px;
+  }
+
+  .arena-head h2 {
+    font-size: clamp(24px, 2.2vw, 34px);
+  }
+
+  .current-match {
+    min-height: 180px;
+    margin: 14px 20px;
+    padding: 12px;
+  }
+
+  .current-label {
+    font-size: clamp(24px, 2vw, 34px);
+    margin-bottom: 6px;
+  }
+
+  .current-number {
+    font-size: clamp(82px, 8vw, 126px);
+  }
+
+  .section-label {
+    margin: 10px 16px 7px;
+    font-size: 14px;
+  }
+
+  .number-row {
+    margin: 0 20px 10px;
+    gap: 8px;
+  }
+
+  .box-number {
+    min-height: 52px;
+    font-size: clamp(24px, 2.2vw, 34px);
+  }
+
+  .viewer-footer {
+    width: min(1455px, 100%);
+    margin-top: 8px;
+  }
 }
 }
