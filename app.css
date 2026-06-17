@@ -547,4 +547,18 @@ select {
   max-width: 180px;
   object-fit: contain;
 }
+  .match-card.green {
+  border-color: rgba(40, 220, 120, .72);
 }
+
+.green .current-match {
+  color: #28dc78;
+  box-shadow: inset 0 0 36px rgba(40, 220, 120, .13), 0 0 24px rgba(40, 220, 120, .2);
+}
+
+.green .box-number.area,
+.green .box-number.ready {
+  color: #35f08a;
+  text-shadow: 0 0 14px rgba(40, 220, 120, .78);
+}
+
