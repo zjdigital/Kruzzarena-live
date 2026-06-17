@@ -4,17 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Admin Panel</title>
-    <link rel="stylesheet" href="app.css?v=5" />
+    <link rel="stylesheet" href="app.css?v=20" />
   </head>
   <body>
     <main class="app-shell">
       <nav class="topbar">
         <div class="brand"><i class="brand-mark"></i>KRUZZ<span>ARENA</span> - Admin Panel</div>
         <div class="top-actions">
+          <button id="addArenaBtn" class="button" type="button">+ Lapangan</button>
           <a class="button secondary" href="viewer.html" target="_blank">Lihat Live</a>
           <button id="logoutBtn" class="button secondary" type="button">Keluar</button>
         </div>
       </nav>
+
+      <section class="viewer-header admin-hero">
+        <div class="viewer-logos" aria-label="Logo event">
+          <img class="viewer-logo-img logo-square" src="medali.png" alt="Medali UNCHALL 2026" />
+          <img class="viewer-logo-img" src="kruzzarena-panjang.png" alt="KRUZZARENA" />
+          <img class="viewer-logo-img" src="LOGO_DEPAN_OFFICIAL_PANITIA_UNCHALL4_2026.png" alt="UNCHALL 4" />
+          <img class="viewer-logo-img logo-square" src="kruzzarena-hybrid.png" alt="KRUZZARENA Hybrid" />
+          <img class="viewer-logo-img logo-square" src="logo-bandae.png" alt="Ultimate Bandae" />
+        </div>
+        <h1 id="adminHeroTitle" class="viewer-title">KRUZZARENA LIVE MATCH DASHBOARD</h1>
+        <p id="adminHeroSubtitle" class="viewer-subtitle">TAEKWONDO ULTIMATE BANDAE CHALLENGE</p>
+      </section>
 
       <form id="adminForm" class="admin-layout">
         <aside class="admin-panel">
@@ -30,29 +43,84 @@
             </label>
             <button class="button" type="submit">Simpan ke Viewer</button>
             <button id="resetBtn" class="button danger" type="button">Reset Data</button>
-            <p class="hint">Input boleh dikosongkan. Kotak kosong akan tampil sebagai tanda strip di viewer.</p>
+            <p class="hint">Urutan sinkron dengan viewer: Masuk Area Pertandingan, Ruang Tunggu, lalu Mohon Bersiap.</p>
           </div>
         </aside>
 
         <section id="arenaEditors" class="arena-editors"></section>
       </form>
+
+      <div id="arenaModal" class="modal" aria-hidden="true">
+        <div class="modal-card">
+          <header class="modal-head">
+            <h2 id="modalTitle">Edit Lapangan</h2>
+            <button id="closeModalBtn" class="icon-button" type="button">x</button>
+          </header>
+
+          <div class="modal-body">
+            <label class="field">
+              <span>Nama Lapangan</span>
+              <input id="modalArenaName" />
+            </label>
+
+            <div class="admin-section">
+              <h3>Warna Tema</h3>
+              <div class="theme-options">
+                <label class="theme-option red">
+                  <input type="radio" name="modalArenaColor" value="red" />
+                  <span>Merah</span>
+                </label>
+                <label class="theme-option blue">
+                  <input type="radio" name="modalArenaColor" value="blue" />
+                  <span>Biru</span>
+                </label>
+                <label class="theme-option green">
+                  <input type="radio" name="modalArenaColor" value="green" />
+                  <span>Hijau</span>
+                </label>
+              </div>
+            </div>
+
+            <label class="field">
+              <span>Set Nomor Partai Aktif</span>
+              <input id="modalArenaCurrent" inputmode="numeric" />
+            </label>
+          </div>
+
+          <footer class="modal-actions">
+            <button id="deleteArenaBtn" class="button danger" type="button">Hapus</button>
+            <button id="clearArenaBtn" class="button warning" type="button">Reset</button>
+            <button id="cancelModalBtn" class="button secondary" type="button">Tutup</button>
+            <button id="saveModalBtn" class="button" type="button">Simpan</button>
+          </footer>
+        </div>
+      </div>
+
       <div id="toast" class="toast">Data berhasil disimpan ke viewer.</div>
     </main>
 
     <script src="config.js"></script>
     <script type="module">
-      import { loadState, saveState, resetState } from "./state.js";
+      import { loadState, saveState, resetState, makeArena } from "./state.js";
 
       if (sessionStorage.getItem("kruzzarena-admin") !== "true") {
         window.location.href = "index.html";
       }
 
       let currentState = await loadState();
+      let activeArenaIndex = null;
       const form = document.querySelector("#adminForm");
       const eventName = document.querySelector("#eventName");
       const subtitle = document.querySelector("#subtitle");
+      const adminHeroTitle = document.querySelector("#adminHeroTitle");
+      const adminHeroSubtitle = document.querySelector("#adminHeroSubtitle");
       const editors = document.querySelector("#arenaEditors");
       const toast = document.querySelector("#toast");
+      const modal = document.querySelector("#arenaModal");
+      const modalTitle = document.querySelector("#modalTitle");
+      const modalArenaName = document.querySelector("#modalArenaName");
+      const modalArenaCurrent = document.querySelector("#modalArenaCurrent");
+      const deleteArenaBtn = document.querySelector("#deleteArenaBtn");
 
       function inputName(arenaIndex, group, index = "") {
         return `arena-${arenaIndex}-${group}${index !== "" ? `-${index}` : ""}`;
@@ -70,22 +138,14 @@
       function renderEditors(state) {
         eventName.value = state.eventName;
         subtitle.value = state.subtitle;
+        adminHeroTitle.textContent = state.eventName;
+        adminHeroSubtitle.textContent = state.subtitle;
+
         editors.innerHTML = state.arenas.map((arena, arenaIndex) => `
-          <article class="arena-editor">
-            <h2>${arena.name}</h2>
-            <div class="mini-grid grid-2">
-              <label class="field">
-                <span>Nama Lapangan</span>
-                <input name="${inputName(arenaIndex, "name")}" value="${arena.name}" />
-              </label>
-              <label class="field">
-                <span>Warna Lapangan</span>
-                <select name="${inputName(arenaIndex, "color")}">
-                  <option value="red" ${arena.color === "red" ? "selected" : ""}>Merah</option>
-                  <option value="blue" ${arena.color === "blue" ? "selected" : ""}>Biru</option>
-                  <option value="green" ${arena.color === "green" ? "selected" : ""}>Hijau</option>
-                </select>
-              </label>
+          <article class="arena-editor ${arena.color}">
+            <div class="arena-editor-head">
+              <h2>${arena.name}</h2>
+              <button class="button secondary compact edit-arena-btn" type="button" data-index="${arenaIndex}">Edit Lapangan</button>
             </div>
 
             <div class="admin-section">
@@ -100,23 +160,28 @@
               <h3>Masuk Area Pertandingan - 2 Kotak</h3>
               <div class="mini-grid grid-2">${makeInputs(arenaIndex, "area", 2)}</div>
             </div>
-<div class="admin-section">
-  <h3>Ruang Tunggu - 10 Kotak</h3>
-  <div class="mini-grid grid-5">${makeInputs(arenaIndex, "waiting", 10)}</div>
-</div>
 
-<div class="admin-section">
-  <h3>Mohon Bersiap - 10 Kotak</h3>
-  <div class="mini-grid grid-5">${makeInputs(arenaIndex, "ready", 10)}</div>
-</div>
+            <div class="admin-section">
+              <h3>Ruang Tunggu - 10 Kotak</h3>
+              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "waiting", 10)}</div>
+            </div>
+
+            <div class="admin-section">
+              <h3>Mohon Bersiap - 10 Kotak</h3>
+              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "ready", 10)}</div>
+            </div>
           </article>
         `).join("");
 
         state.arenas.forEach((arena, arenaIndex) => {
           form.elements[inputName(arenaIndex, "current")].value = arena.current;
           arena.area.forEach((item, index) => form.elements[inputName(arenaIndex, "area", index)].value = item);
-          arena.ready.forEach((item, index) => form.elements[inputName(arenaIndex, "ready", index)].value = item);
           arena.waiting.forEach((item, index) => form.elements[inputName(arenaIndex, "waiting", index)].value = item);
+          arena.ready.forEach((item, index) => form.elements[inputName(arenaIndex, "ready", index)].value = item);
+        });
+
+        document.querySelectorAll(".edit-arena-btn").forEach((button) => {
+          button.addEventListener("click", () => openArenaModal(Number(button.dataset.index)));
         });
       }
 
@@ -127,12 +192,10 @@
           subtitle: subtitle.value,
           arenas: currentState.arenas.map((arena, arenaIndex) => ({
             ...arena,
-            name: form.elements[inputName(arenaIndex, "name")].value,
-            color: form.elements[inputName(arenaIndex, "color")].value,
             current: form.elements[inputName(arenaIndex, "current")].value,
             area: Array.from({ length: 2 }, (_, index) => form.elements[inputName(arenaIndex, "area", index)].value),
-            ready: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "ready", index)].value),
-            waiting: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "waiting", index)].value)
+            waiting: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "waiting", index)].value),
+            ready: Array.from({ length: 10 }, (_, index) => form.elements[inputName(arenaIndex, "ready", index)].value)
           }))
         };
       }
@@ -143,10 +206,85 @@
         setTimeout(() => toast.classList.remove("show"), 2200);
       }
 
+      function openArenaModal(index) {
+        activeArenaIndex = index;
+        const arena = collectState().arenas[index];
+        modalTitle.textContent = `Edit ${arena.name}`;
+        modalArenaName.value = arena.name;
+        modalArenaCurrent.value = arena.current;
+        document.querySelector(`input[name="modalArenaColor"][value="${arena.color}"]`).checked = true;
+        deleteArenaBtn.disabled = currentState.arenas.length <= 1;
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeArenaModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        activeArenaIndex = null;
+      }
+
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         currentState = await saveState(collectState());
+        renderEditors(currentState);
         showToast("Data berhasil disimpan ke viewer.");
+      });
+
+      document.querySelector("#addArenaBtn").addEventListener("click", async () => {
+        const nextNumber = currentState.arenas.length + 1;
+        const colors = ["red", "blue", "green"];
+        currentState = await saveState({
+          ...collectState(),
+          arenas: [
+            ...collectState().arenas,
+            makeArena(`Lapangan ${String.fromCharCode(64 + nextNumber)}`, colors[(nextNumber - 1) % colors.length])
+          ]
+        });
+        renderEditors(currentState);
+        showToast("Lapangan baru ditambahkan.");
+      });
+
+      document.querySelector("#saveModalBtn").addEventListener("click", async () => {
+        const nextState = collectState();
+        const selectedColor = document.querySelector('input[name="modalArenaColor"]:checked').value;
+        nextState.arenas[activeArenaIndex] = {
+          ...nextState.arenas[activeArenaIndex],
+          name: modalArenaName.value,
+          color: selectedColor,
+          current: modalArenaCurrent.value
+        };
+        currentState = await saveState(nextState);
+        renderEditors(currentState);
+        closeArenaModal();
+        showToast("Pengaturan lapangan disimpan.");
+      });
+
+      document.querySelector("#clearArenaBtn").addEventListener("click", async () => {
+        if (!confirm("Kosongkan semua nomor pada lapangan ini?")) return;
+        const nextState = collectState();
+        nextState.arenas[activeArenaIndex] = {
+          ...nextState.arenas[activeArenaIndex],
+          current: "",
+          area: ["", ""],
+          waiting: ["", "", "", "", "", "", "", "", "", ""],
+          ready: ["", "", "", "", "", "", "", "", "", ""]
+        };
+        currentState = await saveState(nextState);
+        renderEditors(currentState);
+        closeArenaModal();
+        showToast("Lapangan berhasil dikosongkan.");
+      });
+
+      deleteArenaBtn.addEventListener("click", async () => {
+        if (currentState.arenas.length <= 1) return;
+        if (!confirm("Hapus lapangan ini dari dashboard?")) return;
+        const nextState = collectState();
+        nextState.arenas.splice(activeArenaIndex, 1);
+        currentState = await saveState(nextState);
+        renderEditors(currentState);
+        closeArenaModal();
+        showToast("Lapangan berhasil dihapus.");
       });
 
       document.querySelector("#resetBtn").addEventListener("click", async () => {
@@ -156,10 +294,16 @@
         showToast("Data jadwal berhasil di-reset.");
       });
 
+      document.querySelector("#closeModalBtn").addEventListener("click", closeArenaModal);
+      document.querySelector("#cancelModalBtn").addEventListener("click", closeArenaModal);
+
       document.querySelector("#logoutBtn").addEventListener("click", () => {
         sessionStorage.removeItem("kruzzarena-admin");
         window.location.href = "index.html";
       });
+
+      eventName.addEventListener("input", () => adminHeroTitle.textContent = eventName.value);
+      subtitle.addEventListener("input", () => adminHeroSubtitle.textContent = subtitle.value);
 
       renderEditors(currentState);
     </script>
