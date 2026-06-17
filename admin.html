@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Admin Panel</title>
-    <link rel="stylesheet" href="app.css?v=20" />
+    <link rel="stylesheet" href="app.css?v=30" />
   </head>
   <body>
-    <main class="app-shell">
-      <nav class="topbar">
+    <main class="app-shell admin-shell">
+      <nav class="topbar admin-topbar">
         <div class="brand"><i class="brand-mark"></i>KRUZZ<span>ARENA</span> - Admin Panel</div>
         <div class="top-actions">
           <button id="addArenaBtn" class="button" type="button">+ Lapangan</button>
@@ -17,7 +17,7 @@
         </div>
       </nav>
 
-      <section class="viewer-header admin-hero">
+      <section class="admin-mini-header">
         <div class="viewer-logos" aria-label="Logo event">
           <img class="viewer-logo-img logo-square" src="medali.png" alt="Medali UNCHALL 2026" />
           <img class="viewer-logo-img" src="kruzzarena-panjang.png" alt="KRUZZARENA" />
@@ -25,29 +25,22 @@
           <img class="viewer-logo-img logo-square" src="kruzzarena-hybrid.png" alt="KRUZZARENA Hybrid" />
           <img class="viewer-logo-img logo-square" src="logo-bandae.png" alt="Ultimate Bandae" />
         </div>
-        <h1 id="adminHeroTitle" class="viewer-title">KRUZZARENA LIVE MATCH DASHBOARD</h1>
-        <p id="adminHeroSubtitle" class="viewer-subtitle">TAEKWONDO ULTIMATE BANDAE CHALLENGE</p>
+        <div class="admin-title-fields">
+          <label class="field">
+            <span>Nama Event</span>
+            <input id="eventName" name="eventName" />
+          </label>
+          <label class="field">
+            <span>Subjudul</span>
+            <input id="subtitle" name="subtitle" />
+          </label>
+          <button id="saveAllBtn" class="button" type="button">Simpan Semua</button>
+          <button id="resetBtn" class="button danger" type="button">Reset Data</button>
+        </div>
       </section>
 
-      <form id="adminForm" class="admin-layout">
-        <aside class="admin-panel">
-          <h1 class="panel-title">Pengaturan Event</h1>
-          <div class="form-stack">
-            <label class="field">
-              <span>Nama Event</span>
-              <input id="eventName" name="eventName" />
-            </label>
-            <label class="field">
-              <span>Subjudul</span>
-              <input id="subtitle" name="subtitle" />
-            </label>
-            <button class="button" type="submit">Simpan ke Viewer</button>
-            <button id="resetBtn" class="button danger" type="button">Reset Data</button>
-            <p class="hint">Urutan sinkron dengan viewer: Masuk Area Pertandingan, Ruang Tunggu, lalu Mohon Bersiap.</p>
-          </div>
-        </aside>
-
-        <section id="arenaEditors" class="arena-editors"></section>
+      <form id="adminForm">
+        <section id="arenaEditors" class="operator-grid"></section>
       </form>
 
       <div id="arenaModal" class="modal" aria-hidden="true">
@@ -112,8 +105,6 @@
       const form = document.querySelector("#adminForm");
       const eventName = document.querySelector("#eventName");
       const subtitle = document.querySelector("#subtitle");
-      const adminHeroTitle = document.querySelector("#adminHeroTitle");
-      const adminHeroSubtitle = document.querySelector("#adminHeroSubtitle");
       const editors = document.querySelector("#arenaEditors");
       const toast = document.querySelector("#toast");
       const modal = document.querySelector("#arenaModal");
@@ -126,49 +117,46 @@
         return `arena-${arenaIndex}-${group}${index !== "" ? `-${index}` : ""}`;
       }
 
-      function makeInputs(arenaIndex, group, count) {
+      function makeQueueInputs(arenaIndex, group, count) {
         return Array.from({ length: count }, (_, index) => `
-          <label class="field">
-            <span>Kotak ${index + 1}</span>
-            <input name="${inputName(arenaIndex, group, index)}" inputmode="numeric" placeholder="Isi partai" />
-          </label>
+          <input class="queue-input" name="${inputName(arenaIndex, group, index)}" inputmode="numeric" placeholder="-" aria-label="${group} kotak ${index + 1}" />
         `).join("");
       }
 
       function renderEditors(state) {
         eventName.value = state.eventName;
         subtitle.value = state.subtitle;
-        adminHeroTitle.textContent = state.eventName;
-        adminHeroSubtitle.textContent = state.subtitle;
 
         editors.innerHTML = state.arenas.map((arena, arenaIndex) => `
-          <article class="arena-editor ${arena.color}">
-            <div class="arena-editor-head">
+          <article class="operator-card ${arena.color}">
+            <header class="operator-head">
               <h2>${arena.name}</h2>
-              <button class="button secondary compact edit-arena-btn" type="button" data-index="${arenaIndex}">Edit Lapangan</button>
+              <button class="icon-button edit-arena-btn" type="button" data-index="${arenaIndex}" title="Edit lapangan">⚙</button>
+            </header>
+
+            <div class="operator-current">
+              <span>Partai</span>
+              <input name="${inputName(arenaIndex, "current")}" inputmode="numeric" aria-label="Partai aktif ${arena.name}" />
             </div>
 
-            <div class="admin-section">
-              <h3>Partai Sedang Tanding</h3>
-              <label class="field">
-                <span>Nomor Partai</span>
-                <input name="${inputName(arenaIndex, "current")}" inputmode="numeric" placeholder="Contoh: 7" />
-              </label>
+            <div class="operator-section">
+              <h3>Masuk Area Pertandingan</h3>
+              <div class="operator-row two">${makeQueueInputs(arenaIndex, "area", 2)}</div>
             </div>
 
-            <div class="admin-section">
-              <h3>Masuk Area Pertandingan - 2 Kotak</h3>
-              <div class="mini-grid grid-2">${makeInputs(arenaIndex, "area", 2)}</div>
+            <div class="operator-section">
+              <h3>Ruang Tunggu</h3>
+              <div class="operator-row ten waiting">${makeQueueInputs(arenaIndex, "waiting", 10)}</div>
             </div>
 
-            <div class="admin-section">
-              <h3>Ruang Tunggu - 10 Kotak</h3>
-              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "waiting", 10)}</div>
+            <div class="operator-section">
+              <h3>Mohon Bersiap</h3>
+              <div class="operator-row ten ready">${makeQueueInputs(arenaIndex, "ready", 10)}</div>
             </div>
 
-            <div class="admin-section">
-              <h3>Mohon Bersiap - 10 Kotak</h3>
-              <div class="mini-grid grid-5">${makeInputs(arenaIndex, "ready", 10)}</div>
+            <div class="operator-actions">
+              <button class="button secondary compact save-arena-btn" type="button" data-index="${arenaIndex}">Simpan</button>
+              <button class="button compact next-arena-btn" type="button" data-index="${arenaIndex}">Next</button>
             </div>
           </article>
         `).join("");
@@ -182,6 +170,12 @@
 
         document.querySelectorAll(".edit-arena-btn").forEach((button) => {
           button.addEventListener("click", () => openArenaModal(Number(button.dataset.index)));
+        });
+        document.querySelectorAll(".save-arena-btn").forEach((button) => {
+          button.addEventListener("click", () => saveAndRender("Data lapangan disimpan."));
+        });
+        document.querySelectorAll(".next-arena-btn").forEach((button) => {
+          button.addEventListener("click", () => nextArena(Number(button.dataset.index)));
         });
       }
 
@@ -200,10 +194,40 @@
         };
       }
 
+      function advanceQueue(arena) {
+        const filledQueue = [...arena.area, ...arena.waiting, ...arena.ready]
+          .map((item) => String(item || "").trim())
+          .filter(Boolean);
+        const nextCurrent = filledQueue[0] || "";
+        const shifted = filledQueue.slice(1).concat(Array(22).fill(""));
+
+        return {
+          ...arena,
+          current: nextCurrent,
+          area: shifted.slice(0, 2),
+          waiting: shifted.slice(2, 12),
+          ready: shifted.slice(12, 22)
+        };
+      }
+
+      async function nextArena(arenaIndex) {
+        const nextState = collectState();
+        nextState.arenas[arenaIndex] = advanceQueue(nextState.arenas[arenaIndex]);
+        currentState = await saveState(nextState);
+        renderEditors(currentState);
+        showToast(`NEXT ${currentState.arenas[arenaIndex].name} berhasil.`);
+      }
+
+      async function saveAndRender(message) {
+        currentState = await saveState(collectState());
+        renderEditors(currentState);
+        showToast(message);
+      }
+
       function showToast(message) {
         toast.textContent = message;
         toast.classList.add("show");
-        setTimeout(() => toast.classList.remove("show"), 2200);
+        setTimeout(() => toast.classList.remove("show"), 1800);
       }
 
       function openArenaModal(index) {
@@ -224,20 +248,16 @@
         activeArenaIndex = null;
       }
 
-      form.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        currentState = await saveState(collectState());
-        renderEditors(currentState);
-        showToast("Data berhasil disimpan ke viewer.");
-      });
+      document.querySelector("#saveAllBtn").addEventListener("click", () => saveAndRender("Semua data berhasil disimpan."));
 
       document.querySelector("#addArenaBtn").addEventListener("click", async () => {
-        const nextNumber = currentState.arenas.length + 1;
+        const baseState = collectState();
+        const nextNumber = baseState.arenas.length + 1;
         const colors = ["red", "blue", "green"];
         currentState = await saveState({
-          ...collectState(),
+          ...baseState,
           arenas: [
-            ...collectState().arenas,
+            ...baseState.arenas,
             makeArena(`Lapangan ${String.fromCharCode(64 + nextNumber)}`, colors[(nextNumber - 1) % colors.length])
           ]
         });
@@ -301,9 +321,6 @@
         sessionStorage.removeItem("kruzzarena-admin");
         window.location.href = "index.html";
       });
-
-      eventName.addEventListener("input", () => adminHeroTitle.textContent = eventName.value);
-      subtitle.addEventListener("input", () => adminHeroSubtitle.textContent = subtitle.value);
 
       renderEditors(currentState);
     </script>
