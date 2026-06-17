@@ -549,6 +549,7 @@ select {
 }
   .match-card.green {
   border-color: rgba(40, 220, 120, .72);
+  box-shadow: 0 20px 54px rgba(0, 0, 0, .38), 0 0 30px rgba(40, 220, 120, .18);
 }
 
 .green .current-match {
@@ -560,6 +561,12 @@ select {
 .green .box-number.ready {
   color: #35f08a;
   text-shadow: 0 0 14px rgba(40, 220, 120, .78);
+}
+
+.green .current-match,
+.green .box-number.area,
+.green .box-number.ready {
+  border-color: #28dc78;
 }
 }
 
