@@ -710,7 +710,7 @@ select {
   }
 
   .current-match {
-    min-height: 180px;
+    min-height: 160px;
   }
 
   .grid-5,
@@ -841,7 +841,7 @@ select {
   }
 
   .current-number {
-    font-size: clamp(82px, 8vw, 126px);
+    font-size: clamp(76px, 7vw, 111px);
   }
 
   .section-label {
