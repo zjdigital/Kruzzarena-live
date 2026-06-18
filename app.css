@@ -1252,8 +1252,8 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
 .login-kruzz-logo {
   display: block;
   width: auto !important;
-  max-width: 260px !important;
-  max-height: 76px !important;
+  max-width: 180px !important;
+  max-height: 46px !important;
   height: auto !important;
   object-fit: contain !important;
   position: static !important;
