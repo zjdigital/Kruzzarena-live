@@ -1102,3 +1102,83 @@ body.mobile-landscape-viewer .viewer-footer {
   right: 0 !important;
   transform: translateY(-50%) !important;
 }
+/* ==================================================
+   FIX FINAL HEADER LOGO VIEWER
+   Medali kiri - KRUZZARENA tengah - Bandae kanan
+================================================== */
+
+.viewer-header {
+  position: relative !important;
+  padding-top: 22px !important;
+}
+
+.viewer-header > .viewer-logos {
+  width: 100% !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto 1fr !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin: 0 0 16px !important;
+
+  position: static !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  height: auto !important;
+}
+
+.viewer-header > .viewer-logos > img {
+  position: static !important;
+  transform: none !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.viewer-header > .viewer-logos > img:nth-child(1) {
+  justify-self: start !important;
+  height: 58px !important;
+  max-width: 90px !important;
+}
+
+.viewer-header > .viewer-logos > img:nth-child(2) {
+  justify-self: center !important;
+  height: 46px !important;
+  max-width: 260px !important;
+}
+
+.viewer-header > .viewer-logos > img:nth-child(3) {
+  justify-self: end !important;
+  height: 58px !important;
+  max-width: 90px !important;
+}
+
+/* HP portrait */
+@media (max-width: 680px) {
+  .viewer-header > .viewer-logos > img:nth-child(1),
+  .viewer-header > .viewer-logos > img:nth-child(3) {
+    height: 42px !important;
+    max-width: 58px !important;
+  }
+
+  .viewer-header > .viewer-logos > img:nth-child(2) {
+    height: 32px !important;
+    max-width: 170px !important;
+  }
+}
+
+/* HP landscape */
+body.mobile-landscape-viewer .viewer-header > .viewer-logos {
+  margin-bottom: 4px !important;
+  gap: 6px !important;
+}
+
+body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(1),
+body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(3) {
+  height: 24px !important;
+  max-width: 36px !important;
+}
+
+body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
+  height: 20px !important;
+  max-width: 110px !important;
+}
