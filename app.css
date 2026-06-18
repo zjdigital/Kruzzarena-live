@@ -1182,3 +1182,24 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
   height: 20px !important;
   max-width: 110px !important;
 }
+.login-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.login-kruzz-logo {
+  width: min(360px, 92%);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, .22));
+}
+
+.login-title {
+  margin: 0;
+  font-size: clamp(44px, 6vw, 76px);
+  line-height: .9;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
