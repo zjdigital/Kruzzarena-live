@@ -1203,3 +1203,19 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
+.login-logo-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.login-kruzz-logo {
+  display: block;
+  width: 220px !important;
+  max-width: 85% !important;
+  height: auto !important;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(255, 255, 255, .18));
+}
