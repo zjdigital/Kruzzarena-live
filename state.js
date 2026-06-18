@@ -54,14 +54,14 @@ function cleanArena(arena = {}, index = 0) {
   const totalMatches = clampNumber(
     arena.totalMatches,
     Math.max(maxExistingPartai(arena), defaultArenaSettings.totalMatches),
-    1,
+    0,
     999
   );
 
   return {
     name: String(arena.name || defaultState.arenas[index]?.name || `Lapangan ${index + 1}`).trim(),
     color: ["red", "blue", "green"].includes(arena.color) ? arena.color : "red",
-    current: clampNumber(arena.current, defaultArenaSettings.current, 1, totalMatches),
+    current: totalMatches <= 0 ? "" : clampNumber(arena.current, defaultArenaSettings.current, 1, totalMatches),
     totalMatches,
     areaCount: clampNumber(arena.areaCount ?? arena.area?.length, defaultArenaSettings.areaCount, 0, 20),
     waitingCount: clampNumber(arena.waitingCount ?? arena.waiting?.length, defaultArenaSettings.waitingCount, 0, 30),
@@ -87,6 +87,17 @@ function numberRange(start, count, totalMatches) {
 
 export function buildArenaView(arena) {
   const clean = cleanArena(arena);
+
+  if (clean.totalMatches <= 0 || clean.current === "") {
+    return {
+      ...clean,
+      current: "",
+      area: Array(clean.areaCount).fill(""),
+      waiting: Array(clean.waitingCount).fill(""),
+      ready: Array(clean.readyCount).fill("")
+    };
+  }
+
   const areaStart = clean.current + 1;
   const waitingStart = areaStart + clean.areaCount;
   const readyStart = waitingStart + clean.waitingCount;
