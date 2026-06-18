@@ -1049,5 +1049,23 @@ body.mobile-landscape-viewer .box-number {
 body.mobile-landscape-viewer .viewer-footer {
   display: none !important;
 }
+.viewer-logos-spread {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 18px;
+}
 
+.viewer-logos-spread .logo-left {
+  justify-self: start;
+}
+
+.viewer-logos-spread .logo-center {
+  justify-self: center;
+}
+
+.viewer-logos-spread .logo-right {
+  justify-self: end;
+}
 
