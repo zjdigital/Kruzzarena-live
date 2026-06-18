@@ -1084,3 +1084,40 @@ body.mobile-landscape-viewer .viewer-footer {
   top: 50%;
   transform: translateY(-50%);
 }
+/* Posisi 3 logo viewer: kiri - tengah - kanan */
+.viewer-header {
+  position: relative !important;
+  padding-top: 92px !important;
+}
+
+.viewer-header > .viewer-logos {
+  position: absolute !important;
+  top: 18px !important;
+  left: 28px !important;
+  right: 28px !important;
+  height: 58px !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+.viewer-header > .viewer-logos img {
+  position: absolute !important;
+  top: 50% !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+.viewer-header > .viewer-logos img:nth-child(1) {
+  left: 0 !important;
+  transform: translateY(-50%) !important;
+}
+
+.viewer-header > .viewer-logos img:nth-child(2) {
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.viewer-header > .viewer-logos img:nth-child(3) {
+  right: 0 !important;
+  transform: translateY(-50%) !important;
+}
