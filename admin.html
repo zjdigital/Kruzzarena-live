@@ -359,17 +359,21 @@
       });
 
       document.querySelector("#clearArenaBtn").addEventListener("click", async () => {
-        if (!confirm("Reset partai aktif lapangan ini ke nomor 1?")) return;
-        const nextState = collectState();
-        nextState.arenas[activeArenaIndex] = {
-          ...nextState.arenas[activeArenaIndex],
-          current: 1
-        };
-        currentState = await saveState(nextState);
-        renderEditors(currentState);
-        closeArenaModal();
-        showToast("Lapangan berhasil di-reset ke partai 1.");
-      });
+  if (!confirm("Kosongkan semua angka pada lapangan ini?")) return;
+
+  const nextState = collectState();
+
+  nextState.arenas[activeArenaIndex] = {
+    ...nextState.arenas[activeArenaIndex],
+    current: "",
+    totalMatches: 0
+  };
+
+  currentState = await saveState(nextState);
+  renderEditors(currentState);
+  closeArenaModal();
+  showToast("Semua angka lapangan berhasil dikosongkan.");
+});
 
       deleteArenaBtn.addEventListener("click", async () => {
         if (currentState.arenas.length <= 1) return;
