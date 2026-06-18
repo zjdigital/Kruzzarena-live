@@ -1239,7 +1239,23 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
   position: static !important;
   transform: none !important;
 }
-
-.login-card {
+.login-logo-wrap {
+  width: 100%;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  margin: 0 auto 18px;
+}
+
+.login-kruzz-logo {
+  display: block;
+  width: auto !important;
+  max-width: 260px !important;
+  max-height: 76px !important;
+  height: auto !important;
+  object-fit: contain !important;
+  position: static !important;
+  transform: none !important;
 }
