@@ -234,7 +234,10 @@ select {
   background: linear-gradient(90deg, rgba(255, 45, 29, .12), rgba(35, 135, 255, .16));
   box-shadow: inset 0 0 40px rgba(255, 255, 255, .04), 0 18px 60px rgba(0, 0, 0, .35);
 }
-
+.viewer-header {
+  padding-left: 18px;
+  padding-right: 18px;
+}
 .viewer-logos {
   display: flex;
   align-items: center;
