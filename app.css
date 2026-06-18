@@ -1049,25 +1049,35 @@ body.mobile-landscape-viewer .box-number {
 body.mobile-landscape-viewer .viewer-footer {
   display: none !important;
 }
-.viewer-logos-spread {
+.viewer-header {
+  position: relative;
+}
+
+.viewer-logos.viewer-logos-spread {
+  position: relative;
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: 18px;
+  min-height: 64px;
+  display: block !important;
+  margin-bottom: 10px;
 }
 
 .viewer-logos-spread .logo-left {
-  justify-self: start;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .viewer-logos-spread .logo-center {
-  justify-self: center;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .viewer-logos-spread .logo-right {
-  justify-self: end;
-}
-.viewer-header {
-  position: relative;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
