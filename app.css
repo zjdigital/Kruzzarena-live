@@ -942,100 +942,115 @@ select {
   .login-card {
     padding: 30px 22px;
   }
-  /* Mobile landscape: viewer tetap 3 kolom seperti desktop */
-@media (max-width: 950px) and (orientation: landscape) {
+ /* FORCE MOBILE LANDSCAPE VIEWER 3 KOLOM */
+@media screen and (orientation: landscape) and (max-height: 600px) {
+  body {
+    overflow-x: hidden;
+  }
+
   .app-shell {
-    width: 100%;
-    max-width: 100vw;
-    padding: 6px 8px;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding: 4px 6px !important;
   }
 
   .viewer-header {
-    margin-top: 0;
-    padding: 6px 8px 8px;
+    margin: 0 auto 8px !important;
+    padding: 5px 8px 7px !important;
+    max-width: 100% !important;
   }
 
   .viewer-logos {
-    gap: 8px;
-    margin-bottom: 4px;
+    gap: 7px !important;
+    margin-bottom: 3px !important;
   }
 
   .viewer-logo-img {
-    height: 20px !important;
-    max-width: 96px;
+    height: 18px !important;
+    max-width: 92px !important;
   }
 
   .viewer-logo-img.logo-square {
-    height: 24px !important;
-    max-width: 32px;
+    height: 22px !important;
+    max-width: 30px !important;
   }
 
   .viewer-title {
-    font-size: clamp(24px, 5.5vw, 42px);
-    line-height: .95;
-    letter-spacing: 1px;
+    font-size: clamp(22px, 5vw, 38px) !important;
+    line-height: .9 !important;
+    letter-spacing: 1px !important;
   }
 
   .viewer-subtitle {
-    margin-top: 4px;
-    font-size: 8px;
-    letter-spacing: 2px;
+    margin-top: 3px !important;
+    font-size: 8px !important;
+    letter-spacing: 1.8px !important;
   }
 
   .viewer-grid {
+    display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-    gap: 8px;
-    width: 100%;
+    gap: 6px !important;
+    width: 100% !important;
   }
 
   .match-card {
-    min-width: 0;
+    min-width: 0 !important;
+    border-radius: 0 !important;
   }
 
   .arena-head {
-    min-height: 34px;
-    padding: 6px;
+    min-height: 30px !important;
+    padding: 5px !important;
   }
 
   .arena-head h2 {
-    font-size: clamp(16px, 3vw, 24px);
+    font-size: clamp(14px, 2.7vw, 22px) !important;
   }
 
   .current-match {
-    min-height: 88px;
-    margin: 8px 8px 6px;
-    padding: 6px;
+    min-height: 74px !important;
+    margin: 6px !important;
+    padding: 4px !important;
   }
 
   .current-label {
-    font-size: 16px;
+    font-size: 13px !important;
   }
 
   .current-number {
-    font-size: clamp(50px, 15vh, 86px);
-    line-height: .85;
+    font-size: clamp(42px, 13vh, 76px) !important;
+    line-height: .82 !important;
   }
 
   .section-label {
-    margin: 6px 8px 4px;
-    font-size: 9px;
-    letter-spacing: 1px;
+    margin: 5px 6px 3px !important;
+    font-size: 8px !important;
+    letter-spacing: .8px !important;
   }
 
   .number-row {
-    gap: 4px;
-    margin-left: 8px;
-    margin-right: 8px;
+    gap: 3px !important;
+    margin-left: 6px !important;
+    margin-right: 6px !important;
+  }
+
+  .cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   }
 
   .box-number {
-    min-height: 26px;
-    height: 26px;
-    font-size: clamp(16px, 3.8vw, 26px);
+    min-height: 22px !important;
+    height: 22px !important;
+    font-size: clamp(13px, 3vw, 22px) !important;
   }
 
   .viewer-footer {
-    display: none;
+    display: none !important;
   }
-}
+
 }
