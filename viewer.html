@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>KRUZZARENA Live Match Dashboard</title>
-    <link rel="stylesheet" href="app.css?v=44" />
+    <link rel="stylesheet" href="app.css?v=45" />
   </head>
   <body>
     <main class="app-shell">
@@ -82,20 +82,22 @@
       tick();
       setInterval(tick, 1000);
     </script>
-    <script>
+   <script>
   function setMobileLandscapeMode() {
     const isLandscape = window.innerWidth > window.innerHeight;
-    const isSmallScreen = window.innerHeight <= 700;
+    const isMobileWidth = window.innerWidth <= 1200;
 
     document.body.classList.toggle(
       "mobile-landscape-viewer",
-      isLandscape && isSmallScreen
+      isLandscape && isMobileWidth
     );
   }
 
   setMobileLandscapeMode();
   window.addEventListener("resize", setMobileLandscapeMode);
-  window.addEventListener("orientationchange", setMobileLandscapeMode);
+  window.addEventListener("orientationchange", function () {
+    setTimeout(setMobileLandscapeMode, 300);
+  });
 </script>
   </body>
 </html>
