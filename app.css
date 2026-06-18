@@ -1064,26 +1064,7 @@ body.mobile-landscape-viewer .viewer-footer {
   margin-bottom: 10px;
 }
 
-.viewer-logos-spread .logo-left {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
 
-.viewer-logos-spread .logo-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.viewer-logos-spread .logo-right {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
 /* Posisi 3 logo viewer: kiri - tengah - kanan */
 .viewer-header {
   position: relative !important;
