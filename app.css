@@ -1058,31 +1058,6 @@ body.mobile-landscape-viewer .viewer-footer {
   position: relative;
 }
 
-.viewer-logos.viewer-logos-spread {
-  position: relative;
-  width: 100%;
-  min-height: 64px;
-  display: block !important;
-  margin-bottom: 10px;
-}
-
-
-/* Posisi 3 logo viewer: kiri - tengah - kanan */
-.viewer-header {
-  position: relative !important;
-  padding-top: 92px !important;
-}
-
-.viewer-header > .viewer-logos {
-  position: absolute !important;
-  top: 18px !important;
-  left: 28px !important;
-  right: 28px !important;
-  height: 58px !important;
-  margin: 0 !important;
-  display: block !important;
-}
-
 .viewer-header > .viewer-logos img {
   position: absolute !important;
   top: 50% !important;
