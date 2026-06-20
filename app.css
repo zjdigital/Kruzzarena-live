@@ -1217,7 +1217,7 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
 /* MEDALI */
 .viewer-logos img:nth-child(1){
     position:absolute !important;
-    left:15px;
+    left:30px;
     top:56%;
     transform:translateY(-50%) !important;
 
@@ -1241,7 +1241,7 @@ body.mobile-landscape-viewer .viewer-header > .viewer-logos > img:nth-child(2) {
 /* BANDAE */
 .viewer-logos img:nth-child(3){
     position:absolute !important;
-    right:15px;
+    right:30px;
     top:56%;
     transform:translateY(-50%) !important;
 
