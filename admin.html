@@ -7,7 +7,40 @@
     <link rel="stylesheet" href="app.css?v=41" />
     <link rel="stylesheet" href="app.css?v=50" />
 
+<style>
+.admin-mini-header .viewer-logos{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    width:100%;
+    margin-bottom:16px;
+}
 
+.admin-mini-header .viewer-logos img:nth-child(1),
+.admin-mini-header .viewer-logos img:nth-child(3){
+    height:52px;
+    width:auto;
+}
+
+.admin-mini-header .viewer-logos img:nth-child(2){
+    height:56px;
+    width:auto;
+    max-width:280px;
+}
+
+@media (max-width:680px){
+
+    .admin-mini-header .viewer-logos img:nth-child(1),
+    .admin-mini-header .viewer-logos img:nth-child(3){
+        height:38px;
+    }
+
+    .admin-mini-header .viewer-logos img:nth-child(2){
+        height:32px;
+        max-width:180px;
+    }
+}
+</style>
   </head>
   <body>
     <main class="app-shell admin-shell">
